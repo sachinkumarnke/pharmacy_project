@@ -2,7 +2,8 @@
 
 A comprehensive Django-based pharmacy management system with e-commerce functionality, admin panel, and Docker deployment.
 
-![Pharmacy System Banner](screenshots/banner.png)
+<img width="1886" height="780" alt="image" src="https://github.com/user-attachments/assets/252a9a23-56cd-40ca-a0df-9fbf6cb16e1e" />
+
 
 ## 🌟 Features
 
@@ -14,7 +15,8 @@ A comprehensive Django-based pharmacy management system with e-commerce function
 - **Multi-step Checkout** process
 - **Order Management** and tracking
 
-![Homepage Screenshot](screenshots/homepage.png)
+<img width="1919" height="927" alt="image" src="https://github.com/user-attachments/assets/7749b662-6c3c-4be5-a3d1-5408e0644c9a" />
+
 
 ### 👨‍⚕️ Healthcare Features
 - **Doctor Profiles** with specializations and photos
@@ -23,7 +25,8 @@ A comprehensive Django-based pharmacy management system with e-commerce function
 - **Product Reviews** and ratings
 - **Customer Notifications**
 
-![Doctor Profiles](screenshots/doctors.png)
+<img width="1880" height="891" alt="image" src="https://github.com/user-attachments/assets/111dd560-52fb-403f-9588-761fa6feb44b" />
+
 
 ### 🔐 User Management
 - **Combined Login/Register** system with toggle
@@ -31,7 +34,8 @@ A comprehensive Django-based pharmacy management system with e-commerce function
 - **Admin Dashboard** with comprehensive controls
 - **Role-based Access** control
 
-![Authentication System](screenshots/auth.png)
+<img width="1898" height="735" alt="image" src="https://github.com/user-attachments/assets/4d937661-f471-4f8b-8814-e7e8ba5e89bc" />
+
 
 ### 📱 Responsive Design
 - **Cross-browser Compatible** (Chrome, Firefox, Safari, Edge, IE11)
@@ -39,7 +43,8 @@ A comprehensive Django-based pharmacy management system with e-commerce function
 - **Touch-friendly Interface**
 - **Optimized Performance**
 
-![Responsive Design](screenshots/responsive.png)
+<img width="476" height="823" alt="image" src="https://github.com/user-attachments/assets/fbac3941-609a-4940-a3dd-7c2d9d797aed" />
+
 
 ## 🛠️ Technology Stack
 
@@ -87,7 +92,8 @@ pharmacy_project/
    - Website: http://localhost:8000
    - Admin: http://localhost:8000/admin
 
-![Docker Setup](screenshots/docker.png)
+<img width="1884" height="514" alt="image" src="https://github.com/user-attachments/assets/37a42c7e-8c3c-4fa1-98e3-97ebeb951280" />
+
 
 ### Option 2: Local Development
 
@@ -140,20 +146,18 @@ pharmacy_project/
 ![Homepage Features](screenshots/homepage-features.png)
 
 ### Product Catalog
-![Product Catalog](screenshots/products.png)
+<img width="1917" height="918" alt="image" src="https://github.com/user-attachments/assets/b4b708ca-8982-4d99-b8b0-d121efd19e55" />
+
 
 ### Shopping Cart and Checkout
-![Shopping Cart](screenshots/cart.png)
-![Checkout Process](screenshots/checkout.png)
+<img width="1917" height="918" alt="image" src="https://github.com/user-attachments/assets/c59e9cea-aac3-40b9-a9f9-e7d430b28d46" />
+
 
 ### Admin Dashboard
-![Admin Dashboard](screenshots/admin.png)
+<img width="1913" height="977" alt="image" src="https://github.com/user-attachments/assets/ff1a44b0-60dd-4214-a189-762cdca74f2d" />
 
-### Wishlist Management
-![Wishlist](screenshots/wishlist.png)
 
-### Advanced Search
-![Advanced Search](screenshots/search.png)
+
 
 ## 🔧 Configuration
 
