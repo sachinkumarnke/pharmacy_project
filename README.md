@@ -280,4 +280,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 **Built with ❤️ using Django and modern web technologies**
 
-![Footer](screenshots/footer.png)
+<img width="1897" height="921" alt="image" src="https://github.com/user-attachments/assets/1b8ddc80-333b-48e9-8257-800a0b1189db" />
+
