@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - media_volume:/app/media
+    environment:
+      - DEBUG=1
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=pharmacy_db
+      - POSTGRES_USER=pharmacy_user
+      - POSTGRES_PASSWORD=pharmacy_pass
+
+volumes:
+  postgres_data:
+  media_volume:

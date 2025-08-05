@@ -1,0 +1,75 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | HealthCare Pharmacy Admin{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}" style="text-decoration: none; color: #2c5aa0;">
+        <i class="fas fa-pills me-2"></i>HealthCare Pharmacy
+    </a>
+</h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+    :root {
+        --primary-color: #2c5aa0;
+        --secondary-color: #28a745;
+        --accent-color: #17a2b8;
+    }
+    
+    #header {
+        background: linear-gradient(135deg, var(--primary-color), var(--accent-color)) !important;
+        color: white !important;
+    }
+    
+    #site-name a {
+        color: white !important;
+        font-weight: bold;
+        font-size: 1.5rem;
+    }
+    
+    .module h2, .module caption, .inline-group h2 {
+        background: var(--primary-color) !important;
+        color: white !important;
+    }
+    
+    .button, input[type=submit], input[type=button], .submit-row input, a.button {
+        background: var(--secondary-color) !important;
+        border-color: var(--secondary-color) !important;
+    }
+    
+    .button:hover, input[type=submit]:hover, input[type=button]:hover, .submit-row input:hover, a.button:hover {
+        background: #218838 !important;
+    }
+    
+    .selector-chosen h2 {
+        background: var(--accent-color) !important;
+    }
+    
+    a:link, a:visited {
+        color: var(--primary-color) !important;
+    }
+    
+    .breadcrumbs {
+        background: #f8f9fa !important;
+        border-bottom: 1px solid #dee2e6 !important;
+    }
+    
+    .dashboard .module table th {
+        background: var(--primary-color) !important;
+        color: white !important;
+    }
+    
+    .dashboard .module {
+        border: 1px solid #dee2e6 !important;
+        border-radius: 8px !important;
+        overflow: hidden !important;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'pharmacy/base.html' %}
+{% block title %}Notifications - AyuRx{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="fw-bold mb-4">
+                <i class="fas fa-bell me-2 text-primary"></i>Notifications
+            </h2>
+            
+            {% if user.is_authenticated %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Notification system is coming soon! You'll receive updates about your orders, prescriptions, and health tips.
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Recent Activity</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center py-4">
+                            <i class="fas fa-bell-slash text-muted" style="font-size: 3rem;"></i>
+                            <p class="text-muted mt-3">No notifications yet</p>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-sign-in-alt me-2"></i>
+                    Please <a href="{% url 'pharmacy:auth' %}" class="alert-link">login</a> to view your notifications.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

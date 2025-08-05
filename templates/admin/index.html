@@ -1,0 +1,261 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+    .dashboard-welcome {
+        background: linear-gradient(135deg, #2c5aa0, #17a2b8, #28a745);
+        color: white;
+        padding: 3rem 2rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .dashboard-welcome::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: dashboardPulse 6s ease-in-out infinite;
+    }
+    
+    @keyframes dashboardPulse {
+        0%, 100% { transform: rotate(0deg) scale(1); }
+        50% { transform: rotate(180deg) scale(1.1); }
+    }
+    
+    .dashboard-welcome h1 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .dashboard-welcome p {
+        opacity: 0.9;
+        margin: 0;
+    }
+    
+    .dashboard-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: linear-gradient(135deg, #ffffff, #f8f9fa);
+        border: none;
+        border-radius: 15px;
+        padding: 2rem 1.5rem;
+        text-align: center;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #2c5aa0, #17a2b8, #28a745, #ffc107);
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+    
+    .stat-icon {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover .stat-icon {
+        transform: scale(1.1);
+    }
+    
+    .stat-icon.products { color: #2c5aa0; }
+    .stat-icon.orders { color: #28a745; }
+    .stat-icon.users { color: #17a2b8; }
+    .stat-icon.categories { color: #ffc107; }
+    
+    .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-label {
+        color: #6c757d;
+        font-weight: 500;
+    }
+    
+    .dashboard .module {
+        border-radius: 10px !important;
+        overflow: hidden !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .dashboard .module h2 {
+        background: linear-gradient(135deg, #2c5aa0, #17a2b8) !important;
+        color: white !important;
+        padding: 1.2rem !important;
+        margin: 0 !important;
+        font-size: 1.3rem !important;
+        font-weight: 600 !important;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .dashboard .module h2 i {
+        margin-right: 0.8rem;
+        font-size: 1.2em;
+    }
+    
+    .dashboard .module h2 a {
+        color: white !important;
+        text-decoration: none !important;
+    }
+    
+    .module table {
+        margin: 0 !important;
+    }
+    
+    .module table th {
+        background: #f8f9fa !important;
+        color: #333 !important;
+        font-weight: 600 !important;
+        padding: 0.8rem !important;
+    }
+    
+    .module table td {
+        padding: 0.8rem !important;
+        border-bottom: 1px solid #dee2e6 !important;
+    }
+    
+    .module table tr:hover {
+        background: #f8f9fa !important;
+    }
+    
+    .addlink, .changelink {
+        color: var(--secondary-color) !important;
+        text-decoration: none !important;
+        font-weight: 500 !important;
+    }
+    
+    .addlink:hover, .changelink:hover {
+        color: #218838 !important;
+        text-decoration: underline !important;
+    }
+    
+    .addlink:before {
+        content: "➕ ";
+        margin-right: 0.5rem;
+    }
+    
+    .changelink:before {
+        content: "📝 ";
+        margin-right: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-welcome">
+    <h1><i class="fas fa-tachometer-alt me-2"></i>Welcome to HealthCare Pharmacy Admin</h1>
+    <p>Manage your pharmacy operations efficiently and securely</p>
+</div>
+
+<div class="dashboard-stats">
+    <div class="stat-card">
+        <div class="stat-icon products">
+            <i class="fas fa-pills"></i>
+        </div>
+        <div class="stat-number" id="products-count">-</div>
+        <div class="stat-label">Total Products</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon orders">
+            <i class="fas fa-shopping-cart"></i>
+        </div>
+        <div class="stat-number" id="orders-count">-</div>
+        <div class="stat-label">Total Orders</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon users">
+            <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-number" id="users-count">-</div>
+        <div class="stat-label">Registered Users</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon categories">
+            <i class="fas fa-tags"></i>
+        </div>
+        <div class="stat-number" id="categories-count">-</div>
+        <div class="stat-label">Categories</div>
+    </div>
+</div>
+
+{% if app_list %}
+    <div class="dashboard">
+        {% for app in app_list %}
+            <div class="app-{{ app.app_label }} module">
+                <h2>
+                    {% if app.app_label == 'pharmacy' %}
+                        <i class="fas fa-pills"></i>
+                    {% elif app.app_label == 'auth' %}
+                        <i class="fas fa-users"></i>
+                    {% else %}
+                        <i class="fas fa-cog"></i>
+                    {% endif %}
+                    <a href="{{ app.app_url }}" class="section" title="{% blocktrans with name=app.name %}Models in the {{ name }} application{% endblocktrans %}">{{ app.name }}</a>
+                </h2>
+                
+                {% for model in app.models %}
+                    <div class="model-{{ model.object_name|lower }}">
+                        {% if model.admin_url %}
+                            <a href="{{ model.admin_url }}" class="changelink">{{ model.name }}</a>
+                        {% else %}
+                            {{ model.name }}
+                        {% endif %}
+
+                        {% if model.add_url %}
+                            <a href="{{ model.add_url }}" class="addlink">{% blocktrans with name=model.name %}Add {{ name }}{% endblocktrans %}</a>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>{% trans "You don't have permission to edit anything." %}</p>
+{% endif %}
+
+<script>
+// Load statistics
+document.addEventListener('DOMContentLoaded', function() {
+    // Simulate loading statistics (in real app, fetch from API)
+    setTimeout(function() {
+        document.getElementById('products-count').textContent = '{{ products_count|default:"0" }}';
+        document.getElementById('orders-count').textContent = '{{ orders_count|default:"0" }}';
+        document.getElementById('users-count').textContent = '{{ users_count|default:"0" }}';
+        document.getElementById('categories-count').textContent = '{{ categories_count|default:"0" }}';
+    }, 500);
+});
+</script>
+{% endblock %}

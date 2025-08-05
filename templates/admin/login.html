@@ -1,0 +1,253 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}{{ block.super }}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+    body {
+        background: linear-gradient(135deg, #2c5aa0, #17a2b8, #28a745);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        min-height: 100vh;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    #container {
+        width: 100%;
+        max-width: 500px;
+        margin: 2rem;
+    }
+    
+    #content {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        padding: 0;
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+    }
+    
+    .login-header {
+        background: linear-gradient(135deg, #2c5aa0, #17a2b8);
+        color: white;
+        padding: 3rem 2rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .login-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: pulse 4s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 0.5; }
+        50% { transform: scale(1.1); opacity: 0.8; }
+    }
+    
+    .login-header i {
+        font-size: 5rem;
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 1;
+        text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+    
+    .login-header h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin: 0;
+        position: relative;
+        z-index: 1;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .login-header p {
+        margin: 0.8rem 0 0 0;
+        opacity: 0.95;
+        font-size: 1.1rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .login-form {
+        padding: 2.5rem;
+        background: #fafafa;
+    }
+    
+    .form-row {
+        margin-bottom: 2rem;
+        position: relative;
+    }
+    
+    .form-row label {
+        display: block;
+        font-weight: 600;
+        color: #2c5aa0;
+        margin-bottom: 0.8rem;
+        font-size: 1.1rem;
+    }
+    
+    .form-row input[type="text"], 
+    .form-row input[type="password"] {
+        width: 100%;
+        padding: 1rem 1.2rem;
+        border: 2px solid #dee2e6;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+        background: white;
+    }
+    
+    .form-row input[type="text"]:focus, 
+    .form-row input[type="password"]:focus {
+        outline: none;
+        border-color: #2c5aa0;
+        box-shadow: 0 0 0 4px rgba(44, 90, 160, 0.15);
+        transform: translateY(-2px);
+    }
+    
+    .submit-row {
+        margin-top: 2.5rem;
+        text-align: center;
+    }
+    
+    .submit-row input[type="submit"] {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    }
+    
+    .submit-row input[type="submit"]:hover {
+        background: linear-gradient(135deg, #218838, #1ea085);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+    }
+    
+    .errornote {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .login-footer {
+        text-align: center;
+        padding: 1rem 2rem 2rem;
+        color: #6c757d;
+        font-size: 0.9rem;
+    }
+    
+    .login-footer a {
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+    
+    .login-footer a:hover {
+        text-decoration: underline;
+    }
+    
+    #header {
+        display: none;
+    }
+    
+    .breadcrumbs {
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} login{% endblock %}
+
+{% block usertools %}{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block content_title %}{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+<div class="login-header">
+    <i class="fas fa-user-md"></i>
+    <h1>HealthCare Pharmacy</h1>
+    <p>Administration Portal</p>
+</div>
+
+<div class="login-form">
+    {% if form.errors and not form.non_field_errors %}
+        <div class="errornote">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            Please correct the errors below.
+        </div>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+        <div class="errornote">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            {{ form.non_field_errors }}
+        </div>
+    {% endif %}
+
+    <form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
+        <div class="form-row">
+            <label for="{{ form.username.id_for_label }}">
+                <i class="fas fa-user me-2"></i>{{ form.username.label }}:
+            </label>
+            {{ form.username }}
+            {% if form.username.errors %}
+                <div class="errornote">{{ form.username.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-row">
+            <label for="{{ form.password.id_for_label }}">
+                <i class="fas fa-lock me-2"></i>{{ form.password.label }}:
+            </label>
+            {{ form.password }}
+            {% if form.password.errors %}
+                <div class="errornote">{{ form.password.errors }}</div>
+            {% endif %}
+        </div>
+
+        {% url 'admin_password_reset' as password_reset_url %}
+        {% if password_reset_url %}
+            <div class="password-reset-link">
+                <a href="{{ password_reset_url }}">{% trans 'Forgotten your password or username?' %}</a>
+            </div>
+        {% endif %}
+
+        <div class="submit-row">
+            <input type="submit" value="{% trans 'Log in' %}" />
+            <input type="hidden" name="next" value="{{ next }}" />
+        </div>
+    </form>
+</div>
+
+<div class="login-footer">
+    <p><i class="fas fa-shield-alt me-2"></i>Secure pharmacy management system</p>
+    <p>&copy; 2024 HealthCare Pharmacy. All rights reserved.</p>
+</div>
+{% endblock %}

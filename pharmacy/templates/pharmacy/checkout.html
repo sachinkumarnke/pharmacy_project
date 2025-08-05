@@ -1,0 +1,198 @@
+{% extends 'pharmacy/base.html' %}
+{% block title %}Checkout - AyuRx{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4"><i class="fas fa-credit-card me-2"></i>Checkout</h2>
+        </div>
+    </div>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="row">
+            <!-- Order Summary -->
+            <div class="col-lg-8">
+                <!-- Shipping Address -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-map-marker-alt me-2"></i>Shipping Address</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="first_name" class="form-label">First Name *</label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="last_name" class="form-label">Last Name *</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.last_name }}" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email *</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone Number *</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" value="{{ user.userprofile.mobile }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Address *</label>
+                            <textarea class="form-control" id="address" name="address" rows="3" required>{{ user.userprofile.address }}</textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="city" class="form-label">City *</label>
+                                <input type="text" class="form-control" id="city" name="city" value="{{ user.userprofile.city }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="zip_code" class="form-label">ZIP Code *</label>
+                                <input type="text" class="form-control" id="zip_code" name="zip_code" value="{{ user.userprofile.zip_code }}" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Method -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-credit-card me-2"></i>Payment Method</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for method in payment_methods %}
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="radio" name="payment_method" id="payment_{{ method.id }}" value="{{ method.id }}" {% if forloop.first %}checked{% endif %}>
+                            <label class="form-check-label d-flex align-items-center" for="payment_{{ method.id }}">
+                                {% if method.icon %}
+                                    <i class="{{ method.icon }} me-2"></i>
+                                {% endif %}
+                                {{ method.name }}
+                                {% if method.processing_fee > 0 %}
+                                    <small class="text-muted ms-2">(+${{ method.processing_fee }} processing fee)</small>
+                                {% endif %}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Order Notes -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-sticky-note me-2"></i>Order Notes (Optional)</h5>
+                    </div>
+                    <div class="card-body">
+                        <textarea class="form-control" name="notes" rows="3" placeholder="Any special instructions for your order..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary Sidebar -->
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-shopping-cart me-2"></i>Order Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Cart Items -->
+                        {% for item in cart_items %}
+                        <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+                            <div class="d-flex align-items-center">
+                                {% if item.product.image %}
+                                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="width: 50px; height: 50px; object-fit: cover;" class="rounded me-3">
+                                {% endif %}
+                                <div>
+                                    <h6 class="mb-0">{{ item.product.name }}</h6>
+                                    <small class="text-muted">Qty: {{ item.quantity }}</small>
+                                </div>
+                            </div>
+                            <span class="fw-bold">${{ item.item_total }}</span>
+                        </div>
+                        {% endfor %}
+
+                        <!-- Coupon Section -->
+                        <div class="mb-3">
+                            {% if applied_coupon %}
+                                <div class="alert alert-success">
+                                    <i class="fas fa-tag me-2"></i>Coupon "{{ applied_coupon.code }}" applied!
+                                </div>
+                            {% else %}
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Coupon code" name="coupon_code">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="applyCoupon()">Apply</button>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Price Breakdown -->
+                        <div class="border-top pt-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Subtotal:</span>
+                                <span>${{ subtotal }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Tax (18%):</span>
+                                <span>${{ tax_amount }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Shipping:</span>
+                                <span>{% if shipping_cost > 0 %} ${{ shipping_cost }}{% else %}FREE{% endif %}</span>
+                            </div>
+                            {% if discount_amount > 0 %}
+                            <div class="d-flex justify-content-between mb-2 text-success">
+                                <span>Discount:</span>
+                                <span>-${{ discount_amount }}</span>
+                            </div>
+                            {% endif %}
+                            <hr>
+                            <div class="d-flex justify-content-between fw-bold fs-5">
+                                <span>Total:</span>
+                                <span>${{ total_amount }}</span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-pharmacy w-100 mt-3">
+                            <i class="fas fa-lock me-2"></i>Place Order
+                        </button>
+                        
+                        <div class="text-center mt-3">
+                            <small class="text-muted">
+                                <i class="fas fa-shield-alt me-1"></i>
+                                Your payment information is secure and encrypted
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+function applyCoupon() {
+    const couponCode = document.querySelector('input[name="coupon_code"]').value;
+    if (couponCode.trim()) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{% url "pharmacy:apply_coupon" %}';
+        
+        const csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = 'csrfmiddlewaretoken';
+        csrfToken.value = '{{ csrf_token }}';
+        
+        const couponInput = document.createElement('input');
+        couponInput.type = 'hidden';
+        couponInput.name = 'coupon_code';
+        couponInput.value = couponCode;
+        
+        form.appendChild(csrfToken);
+        form.appendChild(couponInput);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script>
+{% endblock %}

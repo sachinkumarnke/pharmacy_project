@@ -1,0 +1,422 @@
+{% extends 'pharmacy/base.html' %}
+{% block title %}{{ product.name }} - HealthCare Pharmacy{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="d-flex align-items-center mb-4">
+        <a href="javascript:history.back()" class="btn btn-outline-primary me-3">
+            <i class="fas fa-arrow-left me-2"></i>Back
+        </a>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{% url 'pharmacy:product_list' %}">Products</a></li>
+                <li class="breadcrumb-item active">{{ product.name }}</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="row">
+        <!-- Product Images -->
+        <div class="col-lg-6">
+            <div class="product-gallery">
+                {% if product.images.all %}
+                    <div class="main-image mb-3">
+                        <img src="{{ product.images.first.image.url }}" class="img-fluid rounded shadow" id="mainImage" alt="{{ product.name }}" style="height: 400px; width: 100%; object-fit: cover;">
+                    </div>
+                    {% if product.images.count > 1 %}
+                    <div class="thumbnail-images">
+                        <div class="row g-2">
+                            {% for image in product.images.all %}
+                            <div class="col-3">
+                                <img src="{{ image.image.url }}" class="img-fluid rounded thumbnail-img" alt="{{ image.alt_text|default:product.name }}" onclick="changeMainImage('{{ image.image.url }}')" style="height: 80px; width: 100%; object-fit: cover; cursor: pointer;">
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                {% elif product.image %}
+                    <div class="main-image">
+                        <img src="{{ product.image.url }}" class="img-fluid rounded shadow" alt="{{ product.name }}" style="height: 400px; width: 100%; object-fit: cover;">
+                    </div>
+                {% else %}
+                    <div class="main-image bg-light rounded shadow d-flex align-items-center justify-content-center" style="height: 400px;">
+                        <i class="fas fa-pills text-muted" style="font-size: 5rem;"></i>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Product Info -->
+        <div class="col-lg-6">
+            <div class="product-info">
+                <div class="mb-2">
+                    <span class="badge bg-primary">{{ product.category.name }}</span>
+                    {% if product.is_prescription %}
+                        <span class="badge bg-info ms-1"><i class="fas fa-prescription me-1"></i>Prescription Required</span>
+                    {% endif %}
+                </div>
+                
+                <h1 class="product-title mb-3">{{ product.name }}</h1>
+                
+                <div class="price-section mb-4">
+                    <span class="price-main">${{ product.price }}</span>
+                    <span class="price-label">per unit</span>
+                </div>
+                
+                <div class="stock-section mb-4">
+                    {% if product.stock > 10 %}
+                        <div class="stock-status stock-available">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <span>In Stock ({{ product.stock }} available)</span>
+                        </div>
+                    {% elif product.stock > 0 %}
+                        <div class="stock-status stock-low">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            <span>Low Stock ({{ product.stock }} left)</span>
+                        </div>
+                    {% else %}
+                        <div class="stock-status stock-out">
+                            <i class="fas fa-times-circle me-2"></i>
+                            <span>Out of Stock</span>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <div class="action-buttons mb-4">
+                    {% if product.stock > 0 %}
+                        <a href="{% url 'pharmacy:add_to_cart' product.id %}" class="btn btn-pharmacy btn-lg me-2">
+                            <i class="fas fa-cart-plus me-2"></i>Add to Cart
+                        </a>
+                    {% else %}
+                        <button class="btn btn-secondary btn-lg me-2" disabled>
+                            <i class="fas fa-times me-2"></i>Out of Stock
+                        </button>
+                    {% endif %}
+                    <a href="{% url 'pharmacy:product_list' %}" class="btn btn-outline-primary btn-lg">
+                        <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+                    </a>
+                </div>
+                
+                <!-- Important Information -->
+                <div class="important-info">
+                    <div class="card border-warning">
+                        <div class="card-header bg-warning text-dark">
+                            <h6 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Important Information</h6>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled mb-0">
+                                <li><i class="fas fa-check text-success me-2"></i>Prescription required for certain medications</li>
+                                <li><i class="fas fa-truck text-info me-2"></i>Free delivery on all orders</li>
+                                <li><i class="fas fa-shield-alt text-primary me-2"></i>Quality guaranteed</li>
+                                <li><i class="fas fa-phone text-success me-2"></i>24/7 pharmacist consultation</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Product Details Tabs -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <ul class="nav nav-tabs card-header-tabs" id="productTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button">
+                                <i class="fas fa-info-circle me-2"></i>Description
+                            </button>
+                        </li>
+                        {% if product.benefits %}
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="benefits-tab" data-bs-toggle="tab" data-bs-target="#benefits" type="button">
+                                <i class="fas fa-heart me-2"></i>Benefits
+                            </button>
+                        </li>
+                        {% endif %}
+                        {% if product.ingredients %}
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="ingredients-tab" data-bs-toggle="tab" data-bs-target="#ingredients" type="button">
+                                <i class="fas fa-flask me-2"></i>Ingredients
+                            </button>
+                        </li>
+                        {% endif %}
+                        {% if product.uses %}
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="uses-tab" data-bs-toggle="tab" data-bs-target="#uses" type="button">
+                                <i class="fas fa-stethoscope me-2"></i>Uses
+                            </button>
+                        </li>
+                        {% endif %}
+                        {% if product.how_to_use %}
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="howto-tab" data-bs-toggle="tab" data-bs-target="#howto" type="button">
+                                <i class="fas fa-instructions me-2"></i>How to Use
+                            </button>
+                        </li>
+                        {% endif %}
+                        {% if product.side_effects %}
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="sideeffects-tab" data-bs-toggle="tab" data-bs-target="#sideeffects" type="button">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Side Effects
+                            </button>
+                        </li>
+                        {% endif %}
+                        {% if product.precautions %}
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="precautions-tab" data-bs-toggle="tab" data-bs-target="#precautions" type="button">
+                                <i class="fas fa-shield-alt me-2"></i>Precautions
+                            </button>
+                        </li>
+                        {% endif %}
+                        {% if product.safety_info %}
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="safety-tab" data-bs-toggle="tab" data-bs-target="#safety" type="button">
+                                <i class="fas fa-info-circle me-2"></i>Safety Info
+                            </button>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content" id="productTabsContent">
+                        <div class="tab-pane fade show active" id="description">
+                            <div class="content-section">
+                                <h5><i class="fas fa-info-circle text-primary me-2"></i>Product Description</h5>
+                                <p class="lead">{{ product.description|linebreaks }}</p>
+                            </div>
+                        </div>
+                        {% if product.benefits %}
+                        <div class="tab-pane fade" id="benefits">
+                            <div class="content-section">
+                                <h5><i class="fas fa-heart text-success me-2"></i>Benefits</h5>
+                                <div class="content-text">{{ product.benefits|linebreaks }}</div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if product.ingredients %}
+                        <div class="tab-pane fade" id="ingredients">
+                            <div class="content-section">
+                                <h5><i class="fas fa-flask text-primary me-2"></i>Active Ingredients</h5>
+                                <div class="content-text">{{ product.ingredients|linebreaks }}</div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if product.uses %}
+                        <div class="tab-pane fade" id="uses">
+                            <div class="content-section">
+                                <h5><i class="fas fa-stethoscope text-info me-2"></i>Uses</h5>
+                                <div class="content-text">{{ product.uses|linebreaks }}</div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if product.how_to_use %}
+                        <div class="tab-pane fade" id="howto">
+                            <div class="content-section">
+                                <h5><i class="fas fa-instructions text-warning me-2"></i>How to Use</h5>
+                                <div class="content-text">{{ product.how_to_use|linebreaks }}</div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if product.side_effects %}
+                        <div class="tab-pane fade" id="sideeffects">
+                            <div class="content-section alert alert-warning">
+                                <h5><i class="fas fa-exclamation-triangle text-danger me-2"></i>Side Effects</h5>
+                                <div class="content-text">{{ product.side_effects|linebreaks }}</div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if product.precautions %}
+                        <div class="tab-pane fade" id="precautions">
+                            <div class="content-section alert alert-danger">
+                                <h5><i class="fas fa-shield-alt text-danger me-2"></i>Precautions & Warnings</h5>
+                                <div class="content-text">{{ product.precautions|linebreaks }}</div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if product.safety_info %}
+                        <div class="tab-pane fade" id="safety">
+                            <div class="content-section alert alert-info">
+                                <h5><i class="fas fa-info-circle text-primary me-2"></i>Safety Information</h5>
+                                <div class="content-text">{{ product.safety_info|linebreaks }}</div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Customer Reviews -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-comments me-2"></i>Customer Reviews</h5>
+                </div>
+                <div class="card-body">
+                    {% if user.is_authenticated %}
+                    <form method="post" class="mb-4">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-8">
+                                <textarea name="comment" class="form-control" rows="3" placeholder="Share your experience with this product..." required></textarea>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Rating:</label>
+                                <select name="rating" class="form-control mb-2">
+                                    <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+                                    <option value="4">⭐⭐⭐⭐ Good</option>
+                                    <option value="3">⭐⭐⭐ Average</option>
+                                    <option value="2">⭐⭐ Poor</option>
+                                    <option value="1">⭐ Very Poor</option>
+                                </select>
+                                <button type="submit" class="btn btn-pharmacy w-100">
+                                    <i class="fas fa-paper-plane me-1"></i>Submit Review
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    {% else %}
+                    <p class="text-muted"><a href="{% url 'pharmacy:login' %}">Login</a> to write a review</p>
+                    {% endif %}
+                    
+                    {% for comment in comments %}
+                    <div class="border-bottom pb-3 mb-3">
+                        <div class="d-flex justify-content-between">
+                            <strong>{{ comment.user.first_name|default:comment.user.username }}</strong>
+                            <div>
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= comment.rating %}
+                                        <span class="text-warning">⭐</span>
+                                    {% else %}
+                                        <span class="text-muted">☆</span>
+                                    {% endif %}
+                                {% endfor %}
+                                <small class="text-muted ms-2">{{ comment.created_at|date:"M d, Y" }}</small>
+                            </div>
+                        </div>
+                        <p class="mt-2 mb-0">{{ comment.comment }}</p>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted">No reviews yet. Be the first to review this product!</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Suggested Products -->
+    {% if suggested_products %}
+    <div class="row mt-5">
+        <div class="col-12">
+            <h4 class="mb-4"><i class="fas fa-lightbulb me-2"></i>You might also like</h4>
+            <div class="row">
+                {% for product in suggested_products %}
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="card product-card h-100">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" class="product-image" alt="{{ product.name }}">
+                        {% else %}
+                            <div class="product-placeholder">
+                                <i class="fas fa-pills text-muted" style="font-size: 2rem;"></i>
+                            </div>
+                        {% endif %}
+                        <div class="card-body d-flex flex-column">
+                            <h6 class="card-title text-primary">{{ product.name }}</h6>
+                            <div class="mb-2">
+                                <span class="price-tag">${{ product.price }}</span>
+                            </div>
+                            <div class="mt-auto">
+                                <a href="{% url 'pharmacy:product_detail' product.id %}" class="btn btn-outline-primary btn-sm w-100">
+                                    <i class="fas fa-eye me-1"></i>View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function changeMainImage(imageUrl) {
+    document.getElementById('mainImage').src = imageUrl;
+}
+</script>
+
+<style>
+.product-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.price-main {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--secondary-color);
+}
+
+.price-label {
+    font-size: 1rem;
+    color: #6c757d;
+    margin-left: 10px;
+}
+
+.stock-status {
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.stock-available {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.stock-low {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.stock-out {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.thumbnail-img:hover {
+    opacity: 0.7;
+    transform: scale(1.05);
+    transition: all 0.3s ease;
+}
+
+.content-section {
+    padding: 20px 0;
+}
+
+.content-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.nav-tabs .nav-link {
+    font-weight: 500;
+    color: #6c757d;
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+</style>
+{% endblock %}

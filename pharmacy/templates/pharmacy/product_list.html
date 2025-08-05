@@ -1,0 +1,233 @@
+{% extends 'pharmacy/base.html' %}
+{% block title %}Products - HealthCare Pharmacy{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="bg-gradient-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <div class="d-flex align-items-center mb-3">
+                    <a href="javascript:history.back()" class="btn btn-light me-3">
+                        <i class="fas fa-arrow-left me-2"></i>Back
+                    </a>
+                    <div>
+                        <h1 class="display-6 fw-bold mb-2">
+                            <i class="fas fa-pills me-3"></i>Our Medicine Collection
+                        </h1>
+                        {% if request.GET.search %}
+                            <p class="lead mb-0">Search results for "{{ request.GET.search }}" - {{ products|length }} product{{ products|length|pluralize }} found</p>
+                        {% else %}
+                            <p class="lead mb-0">Discover quality medicines and healthcare products</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center">
+                <i class="fas fa-prescription-bottle-alt" style="font-size: 5rem; opacity: 0.3;"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+
+<div class="container">
+    <!-- Search Results Header -->
+    {% if request.GET.search %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="mb-3">Search Results for "{{ request.GET.search }}"</h2>
+            <p class="text-muted">Found {{ products|length }} product{{ products|length|pluralize }}</p>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- Step-by-Step Shopping Guide -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <h3 class="text-center mb-4"><i class="fas fa-route me-2 text-primary"></i>How to Shop</h3>
+                    <div class="row text-center">
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="step-item">
+                                <div class="step-number">1</div>
+                                <i class="fas fa-search step-icon text-primary"></i>
+                                <h6 class="mt-2">Search & Browse</h6>
+                                <p class="small text-muted">Find your medicines using search or categories</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="step-item">
+                                <div class="step-number">2</div>
+                                <i class="fas fa-eye step-icon text-success"></i>
+                                <h6 class="mt-2">View Details</h6>
+                                <p class="small text-muted">Check ingredients, uses, and side effects</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="step-item">
+                                <div class="step-number">3</div>
+                                <i class="fas fa-cart-plus step-icon text-warning"></i>
+                                <h6 class="mt-2">Add to Cart</h6>
+                                <p class="small text-muted">Add medicines to your shopping cart</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6 mb-3">
+                            <div class="step-item">
+                                <div class="step-number">4</div>
+                                <i class="fas fa-truck step-icon text-info"></i>
+                                <h6 class="mt-2">Get Delivered</h6>
+                                <p class="small text-muted">Receive your order at your doorstep</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Enhanced Category Filter -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-lg-3 mb-3 mb-lg-0">
+                            <h5 class="mb-0"><i class="fas fa-filter me-2 text-primary"></i>Filter Products</h5>
+                            <small class="text-muted">Choose your category</small>
+                        </div>
+                        <div class="col-lg-9">
+                            <div class="d-flex flex-wrap gap-2">
+                                <a href="{% url 'pharmacy:product_list' %}" class="filter-btn {% if not request.GET.category %}active{% endif %}">
+                                    <i class="fas fa-th me-2"></i>All Products
+                                    <span class="badge bg-light text-dark ms-1">{{ products|length }}</span>
+                                </a>
+                                {% for category in categories %}
+                                <a href="?category={{ category.id }}" class="filter-btn {% if request.GET.category == category.id|stringformat:'s' %}active{% endif %}">
+                                    <i class="fas fa-pills me-2"></i>{{ category.name }}
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Products Grid -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="mb-3">
+                <h4 class="mb-2"><i class="fas fa-pills me-2 text-primary"></i>Available Products</h4>
+                <div class="text-muted">
+                    <span>Showing {{ products|length }} products</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row products-grid">
+        {% for product in products %}
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4">
+            <div class="card product-card-enhanced h-100 border-0 shadow-sm">
+                <div class="position-relative">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" class="product-image-enhanced" alt="{{ product.name }}">
+                    {% else %}
+                        <div class="product-placeholder-enhanced">
+                            <i class="fas fa-pills text-muted" style="font-size: 2.5rem;"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Product Badges -->
+                    <div class="product-badges">
+                        {% if product.is_prescription %}
+                            <span class="badge bg-info"><i class="fas fa-prescription me-1"></i>Rx</span>
+                        {% endif %}
+                        {% if product.stock <= 5 and product.stock > 0 %}
+                            <span class="badge bg-warning">Low Stock</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="card-body d-flex flex-column p-3">
+                    <div class="mb-2">
+                        <span class="badge bg-light text-dark small">{{ product.category.name }}</span>
+                    </div>
+                    
+                    <h6 class="card-title text-dark mb-2 fw-bold">{{ product.name }}</h6>
+                    <p class="card-text text-muted small mb-3 flex-grow-1">{{ product.description|truncatewords:10 }}</p>
+                    
+                    <div class="product-price mb-3">
+                        <span class="price-main">${{ product.price }}</span>
+                        <span class="price-label">per unit</span>
+                    </div>
+                    
+                    <div class="stock-info mb-3">
+                        {% if product.stock > 10 %}
+                            <div class="stock-indicator stock-high">
+                                <i class="fas fa-circle me-1"></i>In Stock ({{ product.stock }})
+                            </div>
+                        {% elif product.stock > 0 %}
+                            <div class="stock-indicator stock-low">
+                                <i class="fas fa-circle me-1"></i>Low Stock ({{ product.stock }})
+                            </div>
+                        {% else %}
+                            <div class="stock-indicator stock-out">
+                                <i class="fas fa-circle me-1"></i>Out of Stock
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="product-actions d-grid gap-2">
+                        <a href="{% url 'pharmacy:product_detail' product.id %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-info-circle me-1"></i>View Details
+                        </a>
+                        <div class="d-flex gap-2">
+                            {% if product.stock > 0 %}
+                            <a href="{% url 'pharmacy:add_to_cart' product.id %}" class="btn btn-pharmacy btn-sm flex-fill">
+                                <i class="fas fa-cart-plus me-1"></i>Add to Cart
+                            </a>
+                            {% else %}
+                            <button class="btn btn-secondary btn-sm flex-fill" disabled>
+                                <i class="fas fa-times me-1"></i>Out of Stock
+                            </button>
+                            {% endif %}
+                            {% if user.is_authenticated %}
+                            <a href="{% url 'pharmacy:add_to_wishlist' product.id %}" class="btn btn-outline-danger btn-sm" title="Add to Wishlist">
+                                <i class="fas fa-heart"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="fas fa-search text-muted" style="font-size: 4rem;"></i>
+                <h3 class="mt-3 text-muted">No products found</h3>
+                {% if request.GET.search %}
+                    <p class="text-muted">Try searching with different keywords or <a href="{% url 'pharmacy:product_list' %}">browse all products</a>.</p>
+                {% else %}
+                    <p class="text-muted">Please check back later for new products.</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Product Count -->
+    {% if products %}
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <p class="text-muted">Showing {{ products|length }} product{{ products|length|pluralize }}</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
